@@ -1,5 +1,7 @@
 # TVPN
 
+<p align="center"><img src="docs/images/logo.png" width="128" alt="TVPN logo"></p>
+
 > 一款适合安卓 6.0 以上车机系统或者网络机顶盒的轻量级 VPN 工具
 
 一套 APK 同时跑在 **Android 车机** 和 **Android 电视盒子** 上的按应用 VPN 客户端：
