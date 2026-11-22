@@ -127,18 +127,19 @@ jobs:
 
           本页提供三种安装包，按设备架构选择：
 
-          - `TVPN-<tag>-arm64-v8a.apk`：64 位 ARM 设备（Android 5.0+，主流电视盒子 / 平板 / 车机）
-          - `TVPN-<tag>-armeabi-v7a.apk`：32 位 ARM 设备（老车机、老盒子）
-          - `TVPN-<tag>-universal.apk`：两种架构都包含，不确定架构时用它
+          - `TVPN-<TAG>-arm64-v8a.apk`：64 位 ARM 设备（Android 5.0+，主流电视盒子 / 平板 / 车机）
+          - `TVPN-<TAG>-armeabi-v7a.apk`：32 位 ARM 设备（老车机、老盒子）
+          - `TVPN-<TAG>-universal.apk`：两种架构都包含，不确定架构时用它
 
           功能：订阅导入（Clash，仅 `type: http`，支持 `tls: true`）、多节点管理 + 自动选最快节点、
-          按应用白名单、出口网络自适应（WiFi → 以太网 → 蜂窝）、隧道内 DNS（DoT 方式转发）、
-          故障切换、开机自启、TLS 上游适配器。
+          按应用白名单、出口网络自适应（WiFi → 以太网 → 蜂窝）、故障切换、开机自启、TLS 上游适配器、
+          隧道内 DNS（UDP/53 经代理的 CONNECT 转成 DNS-over-TCP 转发，带污染检测与多解析器回退）。
 
           注意：除 DNS 外不转发 UDP；同一签名升级请勿混装不同签名包；开源许可 GPLv3。
-          本包由 GitHub Actions 从标签 `$TAG` 自动构建并使用 release 密钥签名。
+          本包由 GitHub Actions 从标签 `<TAG>` 自动构建并使用 release 密钥签名。
           EOF
           )
+          NOTES="${NOTES//<TAG>/$TAG}"
           gh release create "$TAG" out/*.apk \
             --repo "${GITHUB_REPOSITORY}" \
             --title "TVPN ${TAG}" \
