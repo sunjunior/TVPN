@@ -1,4 +1,4 @@
-package com.sunjunior.caresimvpn;
+package com.tvpn.client;
 
 import android.content.Context;
 import android.net.Network;
@@ -26,7 +26,7 @@ import javax.net.ssl.SSLSocket;
  * 节点连接必须绑定到真实出口网络（WiFi/eth0），否则会被自己的 tun 套住形成回环。
  */
 final class TlsUpstream {
-    private static final String TAG = "carvpn";
+    private static final String TAG = "tvpn";
     private static final int MAX_CONN = 256;
     private static final int CONNECT_TIMEOUT_MS = 10000;
 

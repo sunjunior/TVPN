@@ -2,9 +2,9 @@
 
 面向 Android 车机的按应用 VPN 客户端：系统级 `VpnService` + 本地 SOCKS5 relay，把指定应用的流量转发到订阅里的 HTTP CONNECT 代理节点。
 
-在别克英朗车机（AC8317 / MT6735 / Android 6.0 / armeabi-v7a）上实机验证，用于让 QQ 音乐等应用通过代理正常联网。
+在别克英朗车机（AC8317 / MT6735 / Android 6.0 / armeabi-v7a）上实机验证，用于让 QQ 音乐等应用通过代理正常联网；同时适配 Android TV（创维 Q6011 / Android 10 / 1920×1080）。
 
-- **版本**：0.2.0（versionCode 2）
+- **版本**：1.1.0（versionCode 2）
 - **最低系统**：Android 5.0（API 21），实机验证 Android 6.0（API 23）
 - **ABI**：仅 `armeabi-v7a`
 - **依赖**：[hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tunnel)（源码包随仓库分发，构建时解压）
@@ -25,6 +25,7 @@
 - **出口网络自适应**：有 WiFi 走 WiFi，没有 WiFi 走 eth0；relay、TLS 适配器、探活统一绑定同一出口
 - **隧道内 DNS**：UDP/53 转 DNS-over-TCP 经节点转发，带污染检测与多解析器回退
 - **加密上游**：`tls: true` 节点由本地 TLS 适配器终结外层 TLS，链路上看不到内层 SNI
+- **宽屏自适应**：内容区最大宽度 840dp，宽屏居中、窄屏铺满；同一 APK 适配车机与电视
 
 ## 工作原理
 
@@ -64,7 +65,7 @@ hev-socks5-tunnel  ──  SOCKS5  ──▶  127.0.0.1:8101 (native relay)
 │   ├── build.gradle
 │   └── src/
 │       ├── main/
-│       │   ├── java/com/sunjunior/caresimvpn/
+│       │   ├── java/com/tvpn/client/
 │       │   │   ├── MainActivity.java        # UI：订阅、节点、白名单、启停
 │       │   │   ├── EsimVpnService.java      # VpnService、relay/隧道生命周期、故障切换
 │       │   │   ├── TlsUpstream.java         # TLS 上游适配器

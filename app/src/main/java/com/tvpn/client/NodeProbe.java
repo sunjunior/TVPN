@@ -1,4 +1,4 @@
-package com.sunjunior.caresimvpn;
+package com.tvpn.client;
 
 import android.content.Context;
 import android.net.Network;
@@ -178,7 +178,7 @@ final class NodeProbe {
         }
 
         for (int i = 0; i < n; i++) {
-            Log.i("carvpn", "probe #" + i + " " + nodes.get(i).label()
+            Log.i("tvpn", "probe #" + i + " " + nodes.get(i).label()
                     + " tcp=" + tcp[i] + "ms full=" + lat[i] + "ms");
         }
         return lat;

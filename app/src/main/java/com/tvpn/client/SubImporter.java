@@ -1,4 +1,4 @@
-package com.sunjunior.caresimvpn;
+package com.tvpn.client;
 
 import android.net.Network;
 

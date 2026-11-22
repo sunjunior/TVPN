@@ -1,4 +1,4 @@
-package com.sunjunior.caresimvpn;
+package com.tvpn.client;
 
 /**
  * 本地 relay 子进程常量（可执行由 ndkBuild BUILD_EXECUTABLE 产出，

@@ -1,0 +1,162 @@
+
+    #7              : (in Lcom/android/server/SkyworthConfig;)
+      name          : 'initAuthMap'
+      type          : '()V'
+      access        : 0x0002 (PRIVATE)
+      code          -
+      registers     : 7
+      ins           : 1
+      outs          : 4
+      insns size    : 138 16-bit code units
+22039c:                                        |[22039c] com.android.server.SkyworthConfig.initAuthMap:()V
+2203ac: 5460 4417                              |0000: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+2203b0: 6e10 f5e4 0000                         |0002: invoke-virtual {v0}, Ljava/util/HashMap;.clear:()V // method@e4f5
+2203b6: 5460 4417                              |0005: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+2203ba: 2201 a10c                              |0007: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+2203be: 1a02 68b6                              |0009: const-string v2, "com.snm.upgrade/com.tianci.ad/android/system/com.android/com.mipt/com.skyworth/com.skyworthdigital/com.skydigital/com.xiaopaitech/com.sky/com.ktcp.tvvideo/com.iflytek/com.nanosic/com.droidlogic.PPPoE/com.hpplay.allcast/com.explorer/com.slanissue.tv.erge/eu.chainfire.perfmon/com.gamecast/com.antutu/com.jd.smart.tv/com.tencent.qqmusictv/com.ktcp.tvvideo/com.iflytek.xiri/com.android.provision/com.jd.smartservicetwo/tv.newtv.loginservice/skyworth.process.media.scan/com.tencent.qqsports.tv/com.hezids/com.huawei.connection/com.loostone.puremic/com.ktcp.launcher" // string@b668
+2203c2: 1a03 25b6                              |000b: const-string v3, "com.forestdata.box" // string@b625
+2203c6: 7040 1649 6123                         |000d: invoke-direct {v1, v6, v3, v2}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+2203cc: 1a03 48b6                              |0010: const-string v3, "com.skyworthdigital.backgroundwhitelist" // string@b648
+2203d0: 6e30 fde4 3001                         |0012: invoke-virtual {v0, v3, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+2203d6: 5460 4417                              |0015: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+2203da: 2201 a10c                              |0017: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+2203de: 1a03 69b6                              |0019: const-string v3, "com.snm.upgrade/com.tianci.ad/com.android/android/system/com.mipt/com.xiaopaitech/.com.skyworth/com.skyworthdigital/com.skydigital/com.sky/com.ktcp.tvvideo/com.iflytek/com.nanosic/com.droidlogic.PPPoE/com.hpplay.allcast/com.jd.smart.tv/com.jd.smartservicetwo/tv.newtv.loginservice/skyworth.process.media.scan/com.tencent.qqsports.tv/com.hezids/com.huawei.connection" // string@b669
+2203e2: 1a04 2db6                              |001b: const-string v4, "com.forestdata.setup" // string@b62d
+2203e6: 7040 1649 6134                         |001d: invoke-direct {v1, v6, v4, v3}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+2203ec: 1a04 65b6                              |0020: const-string v4, "com.skyworthdigital.startupwhitelist" // string@b665
+2203f0: 6e30 fde4 4001                         |0022: invoke-virtual {v0, v4, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+2203f6: 5460 4417                              |0025: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+2203fa: 2201 a10c                              |0027: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+2203fe: 1a04 5fb6                              |0029: const-string v4, "com.skyworthdigital.sky2dlauncher/com.android.provision/com.ktcp.launcher/com.xiaopaitech.plauncher" // string@b65f
+220402: 1a05 28b6                              |002b: const-string v5, "com.forestdata.key" // string@b628
+220406: 7040 1649 6145                         |002d: invoke-direct {v1, v6, v5, v4}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+22040c: 1a05 50b6                              |0030: const-string v5, "com.skyworthdigital.homewhitelist" // string@b650
+220410: 6e30 fde4 5001                         |0032: invoke-virtual {v0, v5, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+220416: 5460 4417                              |0035: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+22041a: 2201 a10c                              |0037: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+22041e: 1a05 26b6                              |0039: const-string v5, "com.forestdata.box2" // string@b626
+220422: 7040 1649 6125                         |003b: invoke-direct {v1, v6, v5, v2}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+220428: 1a05 47b6                              |003e: const-string v5, "com.skyworthdigital.backgroundblacklist" // string@b647
+22042c: 6e30 fde4 5001                         |0040: invoke-virtual {v0, v5, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+220432: 5460 4417                              |0043: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+220436: 2201 a10c                              |0045: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+22043a: 1a05 2eb6                              |0047: const-string v5, "com.forestdata.setup2" // string@b62e
+22043e: 7040 1649 6135                         |0049: invoke-direct {v1, v6, v5, v3}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+220444: 1a05 64b6                              |004c: const-string v5, "com.skyworthdigital.startupblacklist" // string@b664
+220448: 6e30 fde4 5001                         |004e: invoke-virtual {v0, v5, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+22044e: 5460 4417                              |0051: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+220452: 2201 a10c                              |0053: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+220456: 1a05 29b6                              |0055: const-string v5, "com.forestdata.key2" // string@b629
+22045a: 7040 1649 6145                         |0057: invoke-direct {v1, v6, v5, v4}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+220460: 1a05 4fb6                              |005a: const-string v5, "com.skyworthdigital.homeblacklist" // string@b64f
+220464: 6e30 fde4 5001                         |005c: invoke-virtual {v0, v5, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+22046a: 5460 4417                              |005f: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+22046e: 2201 a10c                              |0061: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+220472: 1a05 27b6                              |0063: const-string v5, "com.forestdata.box3" // string@b627
+220476: 7040 1649 6125                         |0065: invoke-direct {v1, v6, v5, v2}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+22047c: 1a02 cbc5                              |0068: const-string v2, "enable_running_backgroud_components" // string@c5cb
+220480: 6e30 fde4 2001                         |006a: invoke-virtual {v0, v2, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+220486: 5460 4417                              |006d: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+22048a: 2201 a10c                              |006f: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+22048e: 1a02 2fb6                              |0071: const-string v2, "com.forestdata.setup3" // string@b62f
+220492: 7040 1649 6132                         |0073: invoke-direct {v1, v6, v2, v3}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+220498: 1a02 bfc5                              |0076: const-string v2, "enable_auto_launch_components" // string@c5bf
+22049c: 6e30 fde4 2001                         |0078: invoke-virtual {v0, v2, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+2204a2: 5460 4417                              |007b: iget-object v0, v6, Lcom/android/server/SkyworthConfig;.mAuthMap:Ljava/util/HashMap; // field@1744
+2204a6: 2201 a10c                              |007d: new-instance v1, Lcom/android/server/SkyworthConfig$AuthMapData; // type@0ca1
+2204aa: 1a02 2ab6                              |007f: const-string v2, "com.forestdata.key3" // string@b62a
+2204ae: 7040 1649 6142                         |0081: invoke-direct {v1, v6, v2, v4}, Lcom/android/server/SkyworthConfig$AuthMapData;.<init>:(Lcom/android/server/SkyworthConfig;Ljava/lang/String;Ljava/lang/String;)V // method@4916
+2204b4: 1a02 c7c5                              |0084: const-string v2, "enable_launcher_components" // string@c5c7
+2204b8: 6e30 fde4 2001                         |0086: invoke-virtual {v0, v2, v1}, Ljava/util/HashMap;.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; // method@e4fd
+2204be: 0e00                                   |0089: return-void
+      catches       : (none)
+      positions     :
+        0x0000 line=153
+        0x0005 line=155
+        0x0015 line=156
+        0x0025 line=157
+        0x0035 line=158
+        0x0043 line=159
+        0x0051 line=160
+        0x005f line=161
+        0x006d line=162
+        0x007b line=163
+        0x0089 line=164
+      locals        :
+        0x0000 - 0x008a reg=6 this Lcom/android/server/SkyworthConfig;
+
+    #8              : (in Lcom/android/server/SkyworthConfig;)
+      name          : 'isInCurrWhiteList'
+      type          : '(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z'
+      access        : 0x0002 (PRIVATE)
+      code          -
+      registers     : 10
+      ins           : 4
+      outs          : 2
+      insns size    : 72 16-bit code units
+21fa48:                                        |[21fa48] com.android.server.SkyworthConfig.isInCurrWhiteList:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z
+21fa58: 1200                                   |0000: const/4 v0, #int 0 // #0
+21fa5a: 1201                                   |0001: const/4 v1, #int 0 // #0
+21fa5c: 7110 2f49 0900                         |0002: invoke-static {v9}, Lcom/android/server/SkyworthConfig;.parseIdList:(Ljava/lang/String;)Ljava/util/ArrayList; // method@492f
+21fa62: 0c02                                   |0005: move-result-object v2
+21fa64: 0720                                   |0006: move-object v0, v2
+21fa66: 0000                                   |0007: nop // spacer
+21fa68: 1a02 42b6                              |0008: const-string v2, "com.skyworthdigital" // string@b642
+21fa6c: 6e20 cee2 2700                         |000a: invoke-virtual {v7, v2}, Ljava/lang/String;.startsWith:(Ljava/lang/String;)Z // method@e2ce
+21fa72: 0a02                                   |000d: move-result v2
+21fa74: 1213                                   |000e: const/4 v3, #int 1 // #1
+21fa76: 3802 1b00                              |000f: if-eqz v2, 002a // +001b
+21fa7a: 6e10 6be4 0000                         |0011: invoke-virtual {v0}, Ljava/util/ArrayList;.iterator:()Ljava/util/Iterator; // method@e46b
+21fa80: 0c02                                   |0014: move-result-object v2
+21fa82: 7210 11e5 0200                         |0015: invoke-interface {v2}, Ljava/util/Iterator;.hasNext:()Z // method@e511
+21fa88: 0a04                                   |0018: move-result v4
+21fa8a: 3804 1000                              |0019: if-eqz v4, 0029 // +0010
+21fa8e: 7210 12e5 0200                         |001b: invoke-interface {v2}, Ljava/util/Iterator;.next:()Ljava/lang/Object; // method@e512
+21fa94: 0c04                                   |001e: move-result-object v4
+21fa96: 1f04 3d1e                              |001f: check-cast v4, Ljava/lang/String; // type@1e3d
+21fa9a: 6e20 b3e2 4800                         |0021: invoke-virtual {v8, v4}, Ljava/lang/String;.equals:(Ljava/lang/Object;)Z // method@e2b3
+21faa0: 0a05                                   |0024: move-result v5
+21faa2: 3805 0300                              |0025: if-eqz v5, 0028 // +0003
+21faa6: 0f03                                   |0027: return v3
+21faa8: 28ed                                   |0028: goto 0015 // -0013
+21faaa: 2819                                   |0029: goto 0042 // +0019
+21faac: 6e10 6be4 0000                         |002a: invoke-virtual {v0}, Ljava/util/ArrayList;.iterator:()Ljava/util/Iterator; // method@e46b
+21fab2: 0c02                                   |002d: move-result-object v2
+21fab4: 7210 11e5 0200                         |002e: invoke-interface {v2}, Ljava/util/Iterator;.hasNext:()Z // method@e511
+21faba: 0a04                                   |0031: move-result v4
+21fabc: 3804 1000                              |0032: if-eqz v4, 0042 // +0010
+21fac0: 7210 12e5 0200                         |0034: invoke-interface {v2}, Ljava/util/Iterator;.next:()Ljava/lang/Object; // method@e512
+21fac6: 0c04                                   |0037: move-result-object v4
+21fac8: 1f04 3d1e                              |0038: check-cast v4, Ljava/lang/String; // type@1e3d
+21facc: 6e20 cee2 4800                         |003a: invoke-virtual {v8, v4}, Ljava/lang/String;.startsWith:(Ljava/lang/String;)Z // method@e2ce
+21fad2: 0a05                                   |003d: move-result v5
+21fad4: 3805 0300                              |003e: if-eqz v5, 0041 // +0003
+21fad8: 0f03                                   |0040: return v3
+21fada: 28ed                                   |0041: goto 002e // -0013
+21fadc: 0f01                                   |0042: return v1
+21fade: 0d02                                   |0043: move-exception v2
+21fae0: 6e10 19e2 0200                         |0044: invoke-virtual {v2}, Ljava/lang/Exception;.printStackTrace:()V // method@e219
+21fae6: 0f01                                   |0047: return v1
+      catches       : 1
+        0x0002 - 0x0006
+          Ljava/lang/Exception; -> 0x0043
+      positions     :
+        0x0000 line=261
+        0x0001 line=263
+        0x0007 line=268
+        0x0008 line=270
+        0x0011 line=271
+        0x0021 line=272
+        0x0027 line=273
+        0x0028 line=275
+        0x002a line=277
+        0x003a line=278
+        0x0040 line=279
+        0x0041 line=281
+        0x0042 line=284
+        0x0043 line=264
+        0x0044 line=266
+        0x0047 line=267
+      locals        :
+        0x0021 - 0x0028 reg=4 name Ljava/lang/String;
+        0x003a - 0x0041 reg=4 name Ljava/lang/String;

@@ -1,4 +1,4 @@
-package com.sunjunior.caresimvpn;
+package com.tvpn.client;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,13 +6,16 @@ import android.net.Network;
 import android.net.VpnService;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,9 +36,30 @@ public class MainActivity extends Activity {
     private ArrayAdapter<String> adapter;
     private boolean filling = false;
 
+    /**
+     * 宽屏自适应：内容最大宽度 840dp 并居中；窄屏（车机等）保持铺满。
+     * 不写死像素，按当前屏幕宽度与 density 计算，TV/车机共用同一 APK。
+     */
+    private void applyResponsiveWidth() {
+        View content = findViewById(R.id.content);
+        if (content == null) return;
+        int widthDp = getResources().getConfiguration().screenWidthDp;
+        final int maxDp = 840;
+        if (widthDp <= maxDp + 32) return;
+        int px = (int) (maxDp * getResources().getDisplayMetrics().density + 0.5f);
+        ViewGroup.LayoutParams raw = content.getLayoutParams();
+        if (raw instanceof FrameLayout.LayoutParams) {
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) raw;
+            lp.width = px;
+            lp.gravity = Gravity.CENTER_HORIZONTAL;
+            content.setLayoutParams(lp);
+        }
+    }
+
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        applyResponsiveWidth();
 
         host = (EditText) findViewById(R.id.host);
         port = (EditText) findViewById(R.id.port);
@@ -205,14 +229,14 @@ public class MainActivity extends Activity {
         final Network net = upstreamNetwork();
         importSub.setEnabled(false);
         status.setText("正在导入订阅…");
-        android.util.Log.i("carvpn", "import start");
+        android.util.Log.i("tvpn", "import start");
 
         new Thread(new Runnable() {
             @Override public void run() {
                 try {
                     String text = SubImporter.fetch(url, net, 12000, MainActivity.this);
                     final SubImporter.Parsed parsed = SubImporter.parseClash(text);
-                    android.util.Log.i("carvpn", "import fetched " + text.length() + " bytes, http nodes=" + parsed.nodes.size());
+                    android.util.Log.i("tvpn", "import fetched " + text.length() + " bytes, http nodes=" + parsed.nodes.size());
                     runOnUiThread(new Runnable() {
                         @Override public void run() {
                             importSub.setEnabled(true);
@@ -234,7 +258,7 @@ public class MainActivity extends Activity {
                         }
                     });
                 } catch (final Exception e) {
-                    android.util.Log.e("carvpn", "import failed", e);
+                    android.util.Log.e("tvpn", "import failed", e);
                     runOnUiThread(new Runnable() {
                         @Override public void run() {
                             importSub.setEnabled(true);

@@ -9,7 +9,7 @@
 ## Q1 嵌入接口定案（上游官方 JNI 存在，弃用自研 wrapper）
 
 - JNI 绑定：`src/hev-jni.c`（`#ifdef ANDROID` + `ENABLE_LIBRARY`），`JNI_OnLoad` → `FindClass(PKGNAME "/"/CLSNAME)`→`RegisterNatives`；
-- Java 类（我们自己的）：`com.sunjunior.caresimvpn.CarVpnTunnel`，四个 static native：
+- Java 类（我们自己的）：`com.tvpn.client.CarVpnTunnel`，四个 static native：
   - `TProxyStartService(String config_path, int fd) → boolean`
   - `TProxyStopService() → boolean`（**有官方 stop，善用**）
   - `TProxyIsRunning() → boolean`
@@ -40,7 +40,7 @@ misc:
 
 - 上游自带 `Android.mk`（AAR 库变体，含 `-DENABLE_LIBRARY`、`-DFD_SET_DEFINED -DSOCKLEN_T_DEFINED`、armv7a 加 `-mfpu=neon`）与 `build.mk`（源清单）；
 - AGP 通过 `externalNativeBuild { ndkBuild { path 'src/main/jni/Android.mk' } }`；
-- 我们的 `src/main/jni/Application.mk`：`APP_PLATFORM=android-21`（上游写 android-29，车机是 23，必须降）+ `APP_ABI=armeabi-v7a` + `APP_CFLAGS += -DPKGNAME=com/sunjunior/caresimvpn -DCLSNAME=CarVpnTunnel`；
+- 我们的 `src/main/jni/Application.mk`：`APP_PLATFORM=android-21`（上游写 android-29，车机是 23，必须降）+ `APP_ABI=armeabi-v7a` + `APP_CFLAGS += -DPKGNAME=com/tvpn/client -DCLSNAME=CarVpnTunnel`；
 - 我们的 `src/main/jni/Android.mk`：仅 `include 上游 Android.mk`（其 `my-dir` 自解析，子模块静态库内部自拼）；
 - 产物：`libhev-socks5-tunnel.so`（launch 时 `System.loadLibrary`）。
 

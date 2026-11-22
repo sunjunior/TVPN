@@ -1,4 +1,4 @@
-package com.sunjunior.caresimvpn;
+package com.tvpn.client;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

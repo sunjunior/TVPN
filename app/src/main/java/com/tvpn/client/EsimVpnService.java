@@ -1,4 +1,4 @@
-package com.sunjunior.caresimvpn;
+package com.tvpn.client;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EsimVpnService extends VpnService {
-    private static final String TAG = "carvpn";
+    private static final String TAG = "tvpn";
     private static final String RELAY_EXEC = CarVpnRelay.EXEC_NAME;
     private static final int RELAY_PORT = CarVpnRelay.PORT;
     /** 单节点完整探活超时：TLS 握手 + CONNECT 200 共用这一份预算 */
     private static final int PROBE_TIMEOUT_MS = 3000;
-    private static final String RELAY_LOG_TAG = "carvpn-relay";
-    static final String ACTION_STOP = "com.sunjunior.caresimvpn.action.STOP";
+    private static final String RELAY_LOG_TAG = "tvpn-relay";
+    static final String ACTION_STOP = "com.tvpn.client.action.STOP";
 
     /** 供 UI 读取的运行状态 */
     static volatile boolean running = false;
@@ -67,7 +67,7 @@ public class EsimVpnService extends VpnService {
                     stopForeground(true);
                     stopSelf();
                 }
-            }, "carvpn-stop").start();
+            }, "tvpn-stop").start();
             return START_NOT_STICKY;
         }
         stopRequested = false;
@@ -77,7 +77,7 @@ public class EsimVpnService extends VpnService {
         startForeground(1, buildNotification("正在启动…"));
         new Thread(new Runnable() {
             @Override public void run() { startInternal(null); }
-        }, "carvpn-start").start();
+        }, "tvpn-start").start();
         return START_STICKY;
     }
 
@@ -121,6 +121,21 @@ public class EsimVpnService extends VpnService {
                 return;
             }
 
+            // 必须先调用 prepare()：系统在 prepare 里把本应用登记为 VPN owner
+            // (Vpn.mOwnerUID)。开机由 BootReceiver 直接起服务时，如果跳过这一步，
+            // establish() 会因 CallingUid != mOwnerUID 而一直返回 null。
+            try {
+                if (VpnService.prepare(this) != null) {
+                    Log.e(TAG, "vpn permission not granted");
+                    stopSelfFail();
+                    return;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "prepare failed", e);
+                stopSelfFail();
+                return;
+            }
+
             try {
                 VpnService.Builder b = new VpnService.Builder()
                         .setSession("car-esim-vpn")
@@ -135,7 +150,23 @@ public class EsimVpnService extends VpnService {
                         Log.w(TAG, "skip pkg: " + p);
                     }
                 }
-                tun = b.establish();
+                tun = null;
+                for (int attempt = 1; attempt <= 20; attempt++) {
+                    try {
+                        tun = b.establish();
+                    } catch (Exception e) {
+                        Log.e(TAG, "establish failed", e);
+                        tun = null;
+                    }
+                    if (tun != null) break;
+                    Log.w(TAG, "tun establish null, retry " + attempt + "/20");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
             } catch (Exception e) {
                 Log.e(TAG, "establish failed", e);
                 tun = null;
@@ -265,7 +296,7 @@ public class EsimVpnService extends VpnService {
                         }
                     } catch (Exception ignored) { }
                 }
-            }, "carvpn-relay-log");
+            }, "tvpn-relay-log");
             lt.start();
             try { Thread.sleep(150); } catch (InterruptedException ignored) { }
             Log.i(TAG, "relay started: " + exe.getAbsolutePath() + " -> " + n.label());
@@ -292,7 +323,7 @@ public class EsimVpnService extends VpnService {
                         /* 先确认节点本身不可用，避免上游对个别目标的正常拒绝导致频繁切换 */
                         if (NodeProbe.probe(cur, 2500) <= 0) failover(cur);
                     }
-                }, "carvpn-failover").start();
+                }, "tvpn-failover").start();
             }
         }
     }
@@ -328,7 +359,7 @@ public class EsimVpnService extends VpnService {
                     fails = 0;                   // 没切成：继续监控原节点
                 }
             }
-        }, "carvpn-watchdog");
+        }, "tvpn-watchdog");
         watchdog.start();
     }
 
@@ -409,7 +440,7 @@ public class EsimVpnService extends VpnService {
         Intent open = new Intent(this, MainActivity.class);
         return new Notification.Builder(this)
                 .setSmallIcon(android.R.drawable.ic_menu_mylocation)
-                .setContentTitle("CarVPN 运行中")
+                .setContentTitle("TVPN 运行中")
                 .setContentText(text)
                 .setContentIntent(PendingIntent.getActivity(this, 0, open, 0))
                 .build();

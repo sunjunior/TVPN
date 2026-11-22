@@ -1,0 +1,64 @@
+        0x0000 - 0x0063 reg=2 this Lcom/android/server/SkyworthConfig;
+        0x0000 - 0x0063 reg=3 context Landroid/content/Context;
+
+    #2              : (in Lcom/android/server/SkyworthConfig;)
+      name          : 'checkList'
+      type          : '(Ljava/lang/String;Ljava/lang/String;)Z'
+      access        : 0x0002 (PRIVATE)
+      code          -
+      registers     : 6
+      ins           : 3
+      outs          : 2
+      insns size    : 18 16-bit code units
+21f968:                                        |[21f968] com.android.server.SkyworthConfig.checkList:(Ljava/lang/String;Ljava/lang/String;)Z
+21f978: 7020 2749 4300                         |0000: invoke-direct {v3, v4}, Lcom/android/server/SkyworthConfig;.getString:(Ljava/lang/String;)Ljava/lang/String; // method@4927
+21f97e: 0c00                                   |0003: move-result-object v0
+21f980: 6e10 b7e2 0500                         |0004: invoke-virtual {v5}, Ljava/lang/String;.getBytes:()[B // method@e2b7
+21f986: 0c01                                   |0007: move-result-object v1
+21f988: 1222                                   |0008: const/4 v2, #int 2 // #2
+21f98a: 7120 7631 2100                         |0009: invoke-static {v1, v2}, Landroid/util/Base64;.encodeToString:([BI)Ljava/lang/String; // method@3176
+21f990: 0c01                                   |000c: move-result-object v1
+21f992: 7120 13cc 1000                         |000d: invoke-static {v0, v1}, Lcom/android/server/skyworth/CryptUtils;.requestIsLegal:(Ljava/lang/String;Ljava/lang/String;)Z // method@cc13
+21f998: 0a02                                   |0010: move-result v2
+21f99a: 0f02                                   |0011: return v2
+      catches       : (none)
+      positions     :
+        0x0000 line=252
+        0x0004 line=254
+        0x000d line=256
+        0x0011 line=257
+      locals        :
+        0x0004 - 0x0012 reg=0 readAuthKey Ljava/lang/String;
+        0x000d - 0x0012 reg=1 mListValue Ljava/lang/String;
+        0x0011 - 0x0012 reg=2 checkValue Z
+        0x0000 - 0x0012 reg=3 this Lcom/android/server/SkyworthConfig;
+        0x0000 - 0x0012 reg=4 keyList Ljava/lang/String;
+        0x0000 - 0x0012 reg=5 value Ljava/lang/String;
+
+    #3              : (in Lcom/android/server/SkyworthConfig;)
+      name          : 'getInstance'
+      type          : '(Landroid/content/Context;)Lcom/android/server/SkyworthConfig;'
+      access        : 0x0009 (PUBLIC STATIC)
+      code          -
+      registers     : 3
+      ins           : 1
+      outs          : 2
+      insns size    : 21 16-bit code units
+21fe04:                                        |[21fe04] com.android.server.SkyworthConfig.getInstance:(Landroid/content/Context;)Lcom/android/server/SkyworthConfig;
+21fe14: 1c00 a30c                              |0000: const-class v0, Lcom/android/server/SkyworthConfig; // type@0ca3
+21fe18: 1d00                                   |0002: monitor-enter v0
+21fe1a: 6201 4717                              |0003: sget-object v1, Lcom/android/server/SkyworthConfig;.sInstance:Lcom/android/server/SkyworthConfig; // field@1747
+21fe1e: 3901 0900                              |0005: if-nez v1, 000e // +0009
+21fe22: 2201 a30c                              |0007: new-instance v1, Lcom/android/server/SkyworthConfig; // type@0ca3
+21fe26: 7020 2349 2100                         |0009: invoke-direct {v1, v2}, Lcom/android/server/SkyworthConfig;.<init>:(Landroid/content/Context;)V // method@4923
+21fe2c: 6901 4717                              |000c: sput-object v1, Lcom/android/server/SkyworthConfig;.sInstance:Lcom/android/server/SkyworthConfig; // field@1747
+21fe30: 6201 4717                              |000e: sget-object v1, Lcom/android/server/SkyworthConfig;.sInstance:Lcom/android/server/SkyworthConfig; // field@1747
+21fe34: 1e00                                   |0010: monitor-exit v0
+21fe36: 1101                                   |0011: return-object v1
+21fe38: 0d01                                   |0012: move-exception v1
+21fe3a: 1e00                                   |0013: monitor-exit v0
+21fe3c: 2701                                   |0014: throw v1
+      catches       : 1
+        0x0003 - 0x0014
+          <any> -> 0x0012
+      positions     :
