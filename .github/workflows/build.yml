@@ -10,6 +10,9 @@ on:
 permissions:
   contents: write
 
+env:
+  ABIS: "armeabi-v7a arm64-v8a"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,28 +39,37 @@ jobs:
       - name: Unit tests
         run: bash ./gradlew test --stacktrace
 
-      # assembleDebug compiles the native relay that release builds also use.
-      - name: Build debug (compiles native relay)
+      # assembleDebug 会编译 JNI 层（relay 可执行文件 + hev-socks5-tunnel），每个 ABI 一份
+      - name: Build debug (compiles native for every ABI)
         run: bash ./gradlew assembleDebug --stacktrace
 
       - name: Stage relay executable into jniLibs source set
         run: |
-          mkdir -p app/src/main/jniLibs/armeabi-v7a
-          cp app/build/intermediates/cxx/Debug/*/obj/local/armeabi-v7a/carvpnrelay \
-             app/src/main/jniLibs/armeabi-v7a/libcarvpnrelay.so
+          for abi in $ABIS; do
+            mkdir -p "app/src/main/jniLibs/$abi"
+            cp app/build/intermediates/cxx/Debug/*/obj/local/$abi/carvpnrelay \
+               "app/src/main/jniLibs/$abi/libcarvpnrelay.so"
+            echo "staged $abi: $(ls -l app/src/main/jniLibs/$abi/libcarvpnrelay.so | awk '{print $5}') bytes"
+          done
 
-      - name: Rebuild debug APK to include relay
+      - name: Rebuild debug APKs to include relay
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         run: bash ./gradlew assembleDebug --stacktrace
 
-      - name: Verify debug APK contains relay
+      - name: Verify debug APKs contain relay for their ABI
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        run: unzip -l app/build/outputs/apk/debug/*.apk | grep -q carvpnrelay
+        run: |
+          for abi in $ABIS; do
+            apk=$(ls app/build/outputs/apk/debug/app-$abi-debug.apk)
+            unzip -l "$apk" | grep -q "lib/$abi/libcarvpnrelay.so" \
+              && echo "OK $abi relay present" \
+              || { echo "MISSING relay in $apk" >&2; exit 1; }
+          done
 
       - uses: actions/upload-artifact@v4
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         with:
-          name: carvpn-debug-apk
+          name: tvpn-debug-apks
           path: app/build/outputs/apk/debug/*.apk
 
       - name: Decode release keystore
@@ -71,40 +83,64 @@ jobs:
           fi
           echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
 
-      - name: Build release APK (signed)
+      - name: Build release APKs (signed, per-ABI + universal)
         if: startsWith(github.ref, 'refs/tags/')
         env:
           KEYSTORE_PATH: ${{ runner.temp }}/release.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: bash ./gradlew assembleRelease --stacktrace
+        run: |
+          bash ./gradlew assembleRelease --stacktrace
+          ls -l app/build/outputs/apk/release/
 
-      - name: Verify release APK (relay + signature)
+      - name: Verify release APKs (relay + signature)
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          APK=app/build/outputs/apk/release/app-release.apk
+          for abi in $ABIS; do
+            apk=app/build/outputs/apk/release/app-$abi-release.apk
+            unzip -l "$apk" | grep -q "lib/$abi/libcarvpnrelay.so" \
+              && echo "OK $abi relay present" \
+              || { echo "MISSING relay in $apk" >&2; exit 1; }
+            unzip -l "$apk" | grep -q "lib/$abi/libhev-socks5-tunnel.so" \
+              && echo "OK $abi tunnel present" \
+              || { echo "MISSING tunnel in $apk" >&2; exit 1; }
+            "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs "$apk" | head -3
+          done
+          APK=app/build/outputs/apk/release/app-universal-release.apk
           unzip -l "$APK" | grep -q carvpnrelay
-          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs "$APK"
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs "$APK" | head -3
 
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp app/build/outputs/apk/release/app-release.apk "carvpn-${GITHUB_REF_NAME}.apk"
-          gh release create "${GITHUB_REF_NAME}" "carvpn-${GITHUB_REF_NAME}.apk" \
+          TAG="${GITHUB_REF_NAME}"
+          mkdir -p out
+          cp app/build/outputs/apk/release/app-arm64-v8a-release.apk   "out/TVPN-${TAG}-arm64-v8a.apk"
+          cp app/build/outputs/apk/release/app-armeabi-v7a-release.apk "out/TVPN-${TAG}-armeabi-v7a.apk"
+          cp app/build/outputs/apk/release/app-universal-release.apk   "out/TVPN-${TAG}-universal.apk"
+          ls -l out/
+          NOTES=$(cat <<'EOF'
+          按应用白名单的轻量级横屏 VPN 客户端（Android 5.0+，targetSdk 23）。
+
+          本页提供三种安装包，按设备架构选择：
+
+          - `TVPN-<tag>-arm64-v8a.apk`：64 位 ARM 设备（Android 5.0+，主流电视盒子 / 平板 / 车机）
+          - `TVPN-<tag>-armeabi-v7a.apk`：32 位 ARM 设备（老车机、老盒子）
+          - `TVPN-<tag>-universal.apk`：两种架构都包含，不确定架构时用它
+
+          功能：订阅导入（Clash，仅 `type: http`，支持 `tls: true`）、多节点管理 + 自动选最快节点、
+          按应用白名单、出口网络自适应（WiFi → 以太网 → 蜂窝）、隧道内 DNS（DoT 方式转发）、
+          故障切换、开机自启、TLS 上游适配器。
+
+          注意：除 DNS 外不转发 UDP；同一签名升级请勿混装不同签名包；开源许可 GPLv3。
+          本包由 GitHub Actions 从标签 `$TAG` 自动构建并使用 release 密钥签名。
+          EOF
+          )
+          gh release create "$TAG" out/*.apk \
             --repo "${GITHUB_REPOSITORY}" \
-            --title "CarVPN ${GITHUB_REF_NAME}" \
-            --notes "适用于 Android 车机的按应用 VPN 客户端（armeabi-v7a，Android 5.0+，实机验证 Android 6.0）。
-
-          - 订阅导入（Clash，仅 type: http，支持 tls: true）
-          - 多节点管理 + 自动选择最快可用节点（TLS 握手 + CONNECT 200 探活）
-          - 出口网络自适应：有 WiFi 走 WiFi，没有 WiFi 走 eth0，运行中变化自动重绑
-          - 按应用白名单、隧道内 DNS、故障切换
-          - TLS 上游适配器，代理链路上的载荷全程加密
-          - 开源许可：GPLv3
-
-          安装：下载 APK 直接安装。本包由 GitHub Actions 从标签 ${GITHUB_REF_NAME} 自动构建并使用 release 密钥签名。
-
-          注意：仅支持 armeabi-v7a；除 DNS 外不转发 UDP；targetSdk 23。"
+            --title "TVPN ${TAG}" \
+            --notes "$NOTES" \
+          || gh release upload "$TAG" out/*.apk --clobber --repo "${GITHUB_REPOSITORY}"

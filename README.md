@@ -8,9 +8,9 @@
 **只把白名单应用的流量**转发到订阅里的 HTTP CONNECT 代理节点，其余应用照常直连。
 
 - **包名**：`com.tvpn.client`
-- **版本**：1.1.0（versionCode 2）
+- **版本**：1.1.1（versionCode 3）
 - **最低系统**：Android 5.0（API 21）；`targetSdk 23`
-- **ABI**：仅 `armeabi-v7a`
+- **ABI**：`armeabi-v7a`、`arm64-v8a`（Releases 里按 ABI 分包，另有 universal 通用包）
 - **界面**：横屏优先，内容区最大宽度 840dp，宽屏居中、窄屏铺满
 - **签名**：`CN=CarVPN, OU=M1, O=SunJunior`（SHA-256 `6cef2533…59397612`）
 
@@ -106,7 +106,7 @@ HTTP CONNECT 上游                DNS-over-TCP（2 字节长度前缀）
 ```text
 .
 ├── app/
-│   ├── build.gradle                          # applicationId com.tvpn.client / targetSdk 23 / armeabi-v7a
+│   ├── build.gradle                          # applicationId com.tvpn.client / targetSdk 23 / 多 ABI
 │   └── src/
 │       ├── main/
 │       │   ├── AndroidManifest.xml
@@ -203,7 +203,7 @@ adb shell dumpsys activity services com.tvpn.client | grep -E 'ServiceRecord|isF
 
 - 只支持 HTTP CONNECT 上游（`type: http`）；`socks5` / `ss` / `vmess` / `tuic` 等节点导入时会被跳过。
 - 除 DNS 外不转发 UDP，走 QUIC（UDP 443）的应用会回退 TCP，首次连接可能偏慢。
-- 仅打包 `armeabi-v7a`，不适用于 64 位设备。
+- 只提供 `armeabi-v7a` / `arm64-v8a` 两种 ARM 包；x86 模拟器需要自行编译。
 - `targetSdk 23`，不满足 Google Play 上架要求。
 - 白名单修改后需要重启代理才生效。
 - 节点可用性依赖出口链路：同一订阅里可能有部分地区节点的 TLS 握手被链路丢弃，自动选路会避开。
