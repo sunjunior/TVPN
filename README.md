@@ -52,6 +52,30 @@
 - **加密上游**：`tls: true` 节点由本地 TLS 适配器终结外层 TLS，链路上看不到内层 SNI
 - **横屏自适应**：内容区最大宽度 840dp，宽屏居中、窄屏铺满
 
+## 界面展示
+
+以下为 1024×600 横屏设备上的实拍（订阅链接、节点地址、账号信息均已打码）。
+
+**主界面：订阅导入与节点选择**
+
+![TVPN 主界面：订阅链接、导入订阅、节点下拉与自动选路](screenshots/02-tvpn-import-node.png)
+
+**分流白名单与运行状态**
+
+![TVPN 白名单与运行状态：按包名分流、退出到后台、当前节点](screenshots/03-tvpn-whitelist-running.png)
+
+**代理生效：浏览器正常访问**
+
+![通过代理访问 Google](screenshots/04-xbrowser-google.png)
+
+**代理生效：视频播放**
+
+![SmartTube 播放 1080p 视频并提供完整播放控制](screenshots/05-smarttube-playback-controls.png)
+
+**全屏播放效果**
+
+![全屏视频画面](screenshots/01-now.png)
+
 ## 软件架构
 
 ### 数据流
