@@ -1,44 +1,30 @@
 # TVPN
 
-<p align="center"><img src="docs/images/logo.png" width="128" alt="TVPN logo"></p>
+<p align="center"><img src="assets/logo.png" width="128" alt="TVPN logo"></p>
 
 > 一款适合安卓 6.0 以上车机系统或者网络机顶盒的轻量级 VPN 工具
 
-一套 APK 同时跑在 **Android 车机** 和 **Android 电视盒子** 上的按应用 VPN 客户端：
-系统级 `VpnService` + 本地 SOCKS5 relay（native）+ [hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tunnel)，
-只把「白名单里的应用」的流量转发到订阅中的 HTTP CONNECT 代理节点，其它应用照常直连。
+通用型横屏 VPN 客户端：系统级 `VpnService` + 本地 SOCKS5 relay（native）+ [hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tunnel)，
+**只把白名单应用的流量**转发到订阅里的 HTTP CONNECT 代理节点，其余应用照常直连。
 
-- **包名**：`com.tvpn.client`（旧名 `com.sunjunior.caresimvpn` / CarVPN）
+- **包名**：`com.tvpn.client`
 - **版本**：1.1.0（versionCode 2）
-- **最低系统**：Android 5.0（API 21）；`targetSdk 23`（同时兼容车机 Android 6.0 与盒子 Android 10）
+- **最低系统**：Android 5.0（API 21）；`targetSdk 23`
 - **ABI**：仅 `armeabi-v7a`
+- **界面**：横屏优先，内容区最大宽度 840dp，宽屏居中、窄屏铺满
 - **签名**：`CN=CarVPN, OU=M1, O=SunJunior`（SHA-256 `6cef2533…59397612`）
 
 > 仓库内不包含任何订阅链接、节点地址、账号密码或签名密钥；节点数据只保存在设备应用的私有目录里。
 
-## 背景
+## 适用场景
 
-这套客户端不是通用翻墙工具，而是为两台"改不动系统"的设备做的：
+- 运行 Android 5.0+ 的**横屏设备**：车机、平板、电视盒子、广告机等；
+- 只需要**少数应用**走代理，其余应用必须保持直连（例如本地播放器、播控类应用、内网应用）；
+- 设备**不能改系统**：无 root、不能改 hosts、不能装 Xposed / 框架、全局 `http_proxy` 不生效或会连带影响其它应用。
 
-| 设备 | 车机 | 电视盒子 |
-|---|---|---|
-| 型号 | 别克英朗 AC8317 | 创维 Q6011（eros-p1） |
-| SoC / 系统 | MT6735 / Android 6.0 | Amlogic / Android 10 |
-| 屏幕 | 1024×600 横屏 | 1920×1080 @320dpi |
-| 限制 | 无 GMS、系统设置项残缺、不能全局改代理 | 无 root、系统签名校验、不能改 hosts / 装 Xposed |
-| 需求 | QQ 音乐、车机浏览器等少数应用要能出网 | YouTube / Netflix / Instagram 等要能出网，同时 B 站、播控应用必须直连（地区版权） |
-
-两条路都被设备堵死了：改 `/etc/hosts`、全局 `http_proxy`、装框架都不现实，而且全局代理会让播控类应用
-直接不可用。所以统一走 **`VpnService` + 按应用白名单**：VPN 只对白名单包名生效（`addAllowedApplication`），
-其余应用收不到 tun 路由，行为和没装 VPN 完全一样。
-
-两端共用一个 APK 的代价是版本要迁就低端：`targetSdk 23`、只打 `armeabi-v7a`、UI 用最大宽度 840dp 的自适应布局，
-同一个包名换机安装即可，同签名可以互相覆盖升级。
-
-## 下载
-
-预编译 APK 见 [Releases](https://github.com/sunjunior/tvpn/releases)；当前源码版本为 **1.1.0**。
-安装包由 GitHub Actions 在打标签时构建（签名材料通过 secrets 注入，不进仓库）。
+这类设备上全局代理往往不可用：要么系统设置项残缺，要么会让不该走代理的应用直接失效。
+本项目的做法是把代理范围收敛到**包名白名单**——`VpnService` 只用 `addAllowedApplication`
+放行白名单内的应用，其它应用连 tun 路由都收不到，行为与未安装 VPN 完全一致。
 
 ## 功能
 
@@ -47,11 +33,11 @@
 - **自动选路**：TCP 预筛 + 分批「TLS 握手 + CONNECT 200」完整探活，按时延选最快可用节点
 - **故障切换**：运行期看门狗检测节点健康，连续失败自动切换；上游连续拒绝也会触发切换
 - **按应用代理**：只代理白名单包名，其余应用完全不受影响
-- **开机自启**：`BootReceiver` 在 `BOOT_COMPLETED` 后直接拉起前台 `VpnService`（首次仍需手动授权一次）
-- **出口网络自适应（WiFi-first）**：有 WiFi 走 WiFi，没有走 eth0，再退蜂窝；relay、TLS 适配器、探活统一绑定同一出口
+- **开机自启**：`BootReceiver` 在 `BOOT_COMPLETED` 后拉起前台 `VpnService`（首次仍需手动授权一次）
+- **出口网络自适应（WiFi-first）**：有 WiFi 走 WiFi，没有走以太网，再退蜂窝；relay、TLS 适配器、探活统一绑定同一出口
 - **隧道内 DNS**：UDP/53 转 DNS-over-TCP 经节点转发，带污染检测与多解析器回退
 - **加密上游**：`tls: true` 节点由本地 TLS 适配器终结外层 TLS，链路上看不到内层 SNI
-- **宽屏自适应**：内容区最大宽度 840dp，宽屏居中、窄屏铺满；同一 APK 适配车机与电视
+- **横屏自适应**：内容区最大宽度 840dp，宽屏居中、窄屏铺满
 
 ## 软件架构
 
@@ -84,7 +70,7 @@ HTTP CONNECT 上游                DNS-over-TCP（2 字节长度前缀）
 
 | 文件 | 职责 |
 |---|---|
-| `MainActivity.java` | UI：订阅、节点选择、白名单、启停；宽屏自适应布局 |
+| `MainActivity.java` | UI：订阅、节点选择、白名单、启停；横屏自适应布局 |
 | `EsimVpnService.java` | `VpnService` 主体：配置 tun、启动 relay / 隧道、看门狗与故障切换、通知 |
 | `CarVpnTunnel.java` | hev-socks5-tunnel 的 JNI 绑定与配置生成（`cache/hev_current.yml`） |
 | `CarVpnRelay.java` | relay 可执行文件（`libcarvpnrelay.so`）与端口常量（8101） |
@@ -93,15 +79,15 @@ HTTP CONNECT 上游                DNS-over-TCP（2 字节长度前缀）
 | `NodeStore.java` / `NodeConfig.java` | 多节点持久化、编解码与参数校验 |
 | `SubImporter.java` | 订阅解析（Clash / 通用 YAML，只收 `type: http`） |
 | `HttpFetcher.java` | 拉订阅：证书链 + 绑定出口网络的 HTTP(S) 客户端 |
-| `UpstreamNet.java` | 出口网络选择（WiFi → eth0 → 蜂窝 → 其它，优先系统已验证网络） |
+| `UpstreamNet.java` | 出口网络选择（WiFi → 以太网 → 蜂窝 → 其它，优先系统已验证网络） |
 | `WhitelistStore.java` | 白名单包名存储 |
 | `BootReceiver.java` | 开机自启 |
 
-### 三个绕不开的设计决策
+### 三个关键设计
 
 1. **relay / 探活 socket 必须绑定真实出口。**
-   这台车机的 VPN 是全局的（没有 `uidrange`），如果上游连接不显式 `bindProcessToNetwork`，
-   就会把自己的隧道套进 tun，形成回环。`UpstreamNet` 因此严格按 WiFi → eth0 → 蜂窝 → 其它排序，
+   部分 ROM 的 VPN 是全局的（没有 `uidrange`），如果上游连接不显式 `bindProcessToNetwork`，
+   就会把自己的隧道套进 tun，形成回环。`UpstreamNet` 因此严格按 WiFi → 以太网 → 蜂窝 → 其它排序，
    并跳过 `TRANSPORT_VPN`。
 
 2. **`tls: true` 节点必须有本地 TLS 适配器。**
@@ -129,12 +115,7 @@ HTTP CONNECT 上游                DNS-over-TCP（2 字节长度前缀）
 │       │   ├── jniLibs/                       # 构建时生成的 relay 可执行文件（gitignore）
 │       │   └── res/                           # 布局、图标、banner、extra_roots.pem
 │       └── test/java/com/tvpn/client/         # JVM 单元测试
-├── docs/
-│   ├── VENDORED.md                            # 原生依赖版本 / SHA256 / JNI 接口
-│   ├── Q6011-无root改造与TVPN部署.md          # 电视盒子侧部署与排障
-│   ├── TVPN-科学上网客户端开发与影音适配.md    # 开发过程、影音适配与实测记录
-│   ├── probe-results.md                       # 早期节点探测记录（历史资料）
-│   └── evidence/                              # 机顶盒取证材料
+├── assets/logo.png                            # README 用图标（与 APK 启动图标一致）
 ├── scripts/
 │   ├── fetch_deps.sh                          # 解压内置的 hev-socks5-tunnel 源码包
 │   └── build-release.{sh,bat}                 # release 构建 + 签名
@@ -159,7 +140,9 @@ HTTP CONNECT 上游                DNS-over-TCP（2 字节长度前缀）
 ```
 
 脚本把 `third_party/hev-socks5-tunnel-0c68850.tar.gz` 解压到 `app/src/main/cpp/`（该目录被 `.gitignore` 忽略）。
-版本与 SHA256 见 [docs/VENDORED.md](docs/VENDORED.md)。
+
+- 上游：[hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tunnel) `0c68850`
+- 源码包 SHA-256：`aef4c3abb9614c17be3a758260f4b40fd557a33a99c16d59871c18e0101cf10e`
 
 ### 单元测试与 Debug 构建
 
@@ -185,9 +168,7 @@ export KEY_PASSWORD='***'
 
 > 换签名后覆盖安装会失败，需要先卸载旧版本。
 
-## 部署
-
-### 车机（Android 6.0）
+## 安装与使用
 
 ```bash
 adb install -r app-release.apk
@@ -195,34 +176,12 @@ adb shell am start -n com.tvpn.client/.MainActivity
 # 首次启动在界面上授权 VPN（系统会记住，之后 BootReceiver 可自动拉起）
 ```
 
-### 电视盒子（创维 Q6011 / Android 10 / 无 root）
-
-```bash
-adb connect 192.168.3.156:5555
-adb install -r app-release.apk
-adb shell dumpsys package com.tvpn.client | grep -E 'versionName|versionCode'
-adb shell am start -n com.tvpn.client/.MainActivity
-```
-
-盒子侧注意：
-
-- 首次仍需在界面上点一次「允许」授予 VPN 权限，之后开机自动生效；
-- 白名单里只放需要出网的应用（如 `com.google.android.youtube`、`com.netflix.ninja`），
-  播控类应用不要加进去，否则会因为出口地区不符直接不可用；
-- 验证是否在跑：`adb shell ps -A | grep -i tvpn` 与
-  `adb shell dumpsys activity services com.tvpn.client | grep -E 'ServiceRecord|isForeground'`。
-
-详细的盒子改造与排障见 [docs/Q6011-无root改造与TVPN部署.md](docs/Q6011-无root改造与TVPN部署.md)。
-
-## 使用
-
-1. 安装 APK 并打开，首次启动授予 VPN 权限。
+1. 打开应用，首次启动授予 VPN 权限。
 2. 填入 Clash / 通用订阅链接，点「导入订阅」（只导入 `type: http` 节点）。
 3. 勾选「自动选择最快可用节点」会立即探活并选路；也可在下拉框手动选。
 4. 在「分流白名单包名」里填需要代理的包名，逗号或空格分隔，例如：
 
    ```text
-   com.tencent.qqmusiccar, com.tencent.qqlive.audiobox, com.mmbox.xbrowser
    com.google.android.youtube, com.netflix.ninja, com.instagram.android
    ```
 
@@ -233,6 +192,8 @@ adb shell am start -n com.tvpn.client/.MainActivity
 ```bash
 adb logcat -s tvpn tvpn-relay
 adb shell dumpsys connectivity | grep -i vpn
+adb shell ps -A | grep -i tvpn
+adb shell dumpsys activity services com.tvpn.client | grep -E 'ServiceRecord|isForeground'
 ```
 
 `tvpn` 标签下能看到选中的节点、TLS 适配器端口、逐节点探活结果（`tcp=…ms full=…ms`）；
@@ -243,7 +204,7 @@ adb shell dumpsys connectivity | grep -i vpn
 - 只支持 HTTP CONNECT 上游（`type: http`）；`socks5` / `ss` / `vmess` / `tuic` 等节点导入时会被跳过。
 - 除 DNS 外不转发 UDP，走 QUIC（UDP 443）的应用会回退 TCP，首次连接可能偏慢。
 - 仅打包 `armeabi-v7a`，不适用于 64 位设备。
-- `targetSdk 23` 是为车机 Android 6.0 兼容性固定，不满足 Google Play 上架要求。
+- `targetSdk 23`，不满足 Google Play 上架要求。
 - 白名单修改后需要重启代理才生效。
 - 节点可用性依赖出口链路：同一订阅里可能有部分地区节点的 TLS 握手被链路丢弃，自动选路会避开。
 - 可播放内容、推荐内容受节点出口地区与版权授权影响，属于内容侧限制，不是隧道故障。
@@ -253,14 +214,7 @@ adb shell dumpsys connectivity | grep -i vpn
 - 订阅链接、节点账号密码只保存在应用私有 `SharedPreferences`（`node_store`），不写源码、不写日志。
 - `res/raw/extra_roots.pem` 只含公共根证书（补齐 Android 6 缺失的 ISRG Root），不含私钥。
 - 发布用 keystore 放在仓库外，由构建脚本通过环境变量读取。
-- 原生依赖以源码包随仓库分发，构建前可核对 [docs/VENDORED.md](docs/VENDORED.md) 的 SHA256。
-
-## 文档
-
-- [docs/VENDORED.md](docs/VENDORED.md)：原生依赖版本、JNI 接口与配置字段
-- [docs/TVPN-科学上网客户端开发与影音适配.md](docs/TVPN-科学上网客户端开发与影音适配.md)：开发过程、影音适配与实测
-- [docs/Q6011-无root改造与TVPN部署.md](docs/Q6011-无root改造与TVPN部署.md)：机顶盒无 root 部署、adb/权限/排障
-- [docs/probe-results.md](docs/probe-results.md)：早期节点探测记录（历史资料）
+- 原生依赖以源码包随仓库分发，构建前可核对上面的 SHA-256。
 
 ## 致谢
 
@@ -272,4 +226,4 @@ adb shell dumpsys connectivity | grep -i vpn
 本项目采用 **GNU General Public License v3.0（GPLv3）**，完整条款见 [LICENSE](LICENSE)。
 
 第三方组件 `hev-socks5-tunnel` 采用 MIT 协议，与 GPLv3 兼容；分发包含该组件的二进制时，
-需保留其版权与许可声明（见 [docs/VENDORED.md](docs/VENDORED.md)）。
+需保留其版权与许可声明。
