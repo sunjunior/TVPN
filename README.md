@@ -1,5 +1,7 @@
 # TVPN
 
+> 一款适合安卓 6.0 以上车机系统或者网络机顶盒的轻量级 VPN 工具
+
 一套 APK 同时跑在 **Android 车机** 和 **Android 电视盒子** 上的按应用 VPN 客户端：
 系统级 `VpnService` + 本地 SOCKS5 relay（native）+ [hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tunnel)，
 只把「白名单里的应用」的流量转发到订阅中的 HTTP CONNECT 代理节点，其它应用照常直连。
