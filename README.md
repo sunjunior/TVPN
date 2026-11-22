@@ -22,12 +22,12 @@
 
 | 安装包 | 适用设备 | 说明 |
 |---|---|---|
-| TVPN-<tag>-arm64-v8a.apk | 64 位 ARM（Android 5.0+） | 主流电视盒子、平板、新一点的车机 |
-| TVPN-<tag>-armeabi-v7a.apk | 32 位 ARM（Android 5.0+） | 老车机、老盒子 |
-| TVPN-<tag>-universal.apk | 两种架构都有 | 不确定设备架构时用这个 |
+| `TVPN-<tag>-arm64-v8a.apk` | 64 位 ARM（Android 5.0+） | 主流电视盒子、平板、新一点的车机 |
+| `TVPN-<tag>-armeabi-v7a.apk` | 32 位 ARM（Android 5.0+） | 老车机、老盒子 |
+| `TVPN-<tag>-universal.apk` | 两种架构都有 | 不确定设备架构时用这个 |
 
-安装包由 GitHub Actions 在推 * 标签时自动构建，使用 release 密钥签名（与历史版本同一张证书，可直接覆盖升级）。
-查看设备架构：db shell getprop ro.product.cpu.abi。
+安装包由 GitHub Actions 在推 `v*` 标签时自动构建，使用 release 密钥签名（与历史版本同一张证书，可直接覆盖升级）。
+查看设备架构：`adb shell getprop ro.product.cpu.abi`。
 
 ## 适用场景
 
