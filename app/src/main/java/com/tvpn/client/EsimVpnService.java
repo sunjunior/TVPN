@@ -271,7 +271,9 @@ public class EsimVpnService extends VpnService {
             cmd.add(String.valueOf(upPort));
             cmd.add(n.username == null ? "" : n.username);
             cmd.add(n.password == null ? "" : n.password);
-            cmd.add("114.114.114.114,223.5.5.5,8.8.8.8");
+            // 走隧道解析，必须用"不被污染"的 DNS：国内 114/223 会返回 GFW 投毒结果，
+            // 拿到假 IP 后上游 CONNECT 全部 502（SmartTube 表现为 NoRouteToHost）。
+            cmd.add("8.8.8.8,1.1.1.1,223.5.5.5");
             cmd.add(upstreamHandle());
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);

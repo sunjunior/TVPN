@@ -16,8 +16,8 @@ android {
         applicationId 'com.tvpn.client'
         minSdk 21
         targetSdk 23
-        versionCode 3
-        versionName '1.1.1'
+        versionCode 4
+        versionName '1.1.2'
         ndk { abiFilters 'armeabi-v7a', 'arm64-v8a' }
     }
     // 每个 ABI 单独出包（体积小、安装明确），另附一个通用包
